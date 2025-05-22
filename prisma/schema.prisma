@@ -1,0 +1,178 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+  output          = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String  @id
+  name          String
+  email         String
+  emailVerified Boolean
+  
+  image         String?
+
+  caption       String?
+  website       String?
+  gender        String  @default("NONE")
+
+  createdAt  DateTime
+  updatedAt  DateTime
+  sessions   Session[]
+  accounts   Account[]
+  posts      Posts[]
+  likes      Likes[]
+  savedPosts SavedPosts[]
+  followers  Followers[]  @relation("UserFollowers")
+  followings Followers[]  @relation("UserFollowing")
+  comments   Comments[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
+
+model Posts {
+  id     String @id @default(cuid())
+  userId String
+
+  imageUrl String?
+  imageId  String?
+
+  description     String
+  isPrivate       Boolean @default(false)
+  enabledComments Boolean @default(true)
+  location        String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postImage PostImage?
+
+  likes      Likes[]
+  savedPosts SavedPosts[]
+  comments   Comments[]
+}
+
+model PostImage {
+  id     String @id @default(cuid())
+  postId String @unique
+
+  imageUrl String?
+  imageId  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user Posts @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model Comments {
+  id     String @id @default(cuid())
+  userId String
+  postId String
+
+  content String
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  posts Posts @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Followers {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  follower  User @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("UserFollowing", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+}
+
+model Likes {
+  id String @id @default(cuid())
+
+  postId String
+  userId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  posts Posts @relation(fields: [postId], references: [id], onDelete: Cascade)
+  users User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([postId, userId])
+}
+
+model SavedPosts {
+  id     String @id @default(cuid())
+  userId String
+  postId String
+
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Posts @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, postId])
+  @@index([userId])
+  @@index([postId])
+}
