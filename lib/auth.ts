@@ -6,13 +6,13 @@ import { headers } from 'next/headers'
 
 export const auth = betterAuth({
   database: prismaAdapter(db, { provider: 'sqlite' }),
+  emailAndPassword: { enabled: true },
   socialProviders: {
     discord: {
       clientId: process.env.DISCORD_CLIENT_ID!,
       clientSecret: process.env.DISCORD_CLIENT_SECRET!,
     },
   },
-  emailAndPassword: { enabled: true },
   plugins: [nextCookies()],
 })
 
