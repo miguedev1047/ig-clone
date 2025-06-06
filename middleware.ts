@@ -1,21 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSessionCookie } from 'better-auth/cookies'
 
-export const PUBLIC_ROUTES = ['/']
-
-export const DEFAULT_LOGIN_REDIRECT = '/feed'
-
-export const DEFAULT_URL = '/'
-
 export async function middleware(request: NextRequest) {
+  const PUBLIC_ROUTES = ['/']
+  const DEFAULT_LOGIN_REDIRECT = '/feed'
+  const DEFAULT_URL = '/'
+
   const { nextUrl } = request
   const sessionCookie = getSessionCookie(request)
 
   const isLoggedIn = !!sessionCookie
   const pathname = nextUrl.pathname
 
-  const isOnPublicRoute = PUBLIC_ROUTES.some((route) =>
-    pathname === route || pathname.startsWith(`${route}/`)
+  const isOnPublicRoute = PUBLIC_ROUTES.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`)
   )
   const isOnAuthRoute = pathname.startsWith('/account')
   const isProtectedRoute = !isOnPublicRoute && !isOnAuthRoute
