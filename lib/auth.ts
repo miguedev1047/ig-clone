@@ -13,6 +13,13 @@ export const auth = betterAuth({
       clientSecret: process.env.DISCORD_CLIENT_SECRET!,
     },
   },
+  user: {
+    additionalFields: {
+      website: { type: 'string', required: false },
+      caption: { type: 'string', required: false },
+      gender: { type: 'string', required: false },
+    },
+  },
   plugins: [nextCookies()],
 })
 
