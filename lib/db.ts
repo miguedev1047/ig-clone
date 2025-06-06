@@ -6,4 +6,8 @@ const adapter = new PrismaLibSQL({
   authToken: `${process.env.TURSO_AUTH_TOKEN}`,
 })
 
-export const db = new PrismaClient({ adapter })
+const globalForPrisma = global as unknown as { prisma: PrismaClient }
+
+export const db = globalForPrisma.prisma || new PrismaClient({ adapter })
+
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = db
