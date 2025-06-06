@@ -1,6 +1,11 @@
-import { DEFAULT_LOGIN_REDIRECT, DEFAULT_URL, PUBLIC_ROUTES } from '@/routes'
 import { NextRequest, NextResponse } from 'next/server'
 import { getSessionCookie } from 'better-auth/cookies'
+
+export const PUBLIC_ROUTES = ['/']
+
+export const DEFAULT_LOGIN_REDIRECT = '/feed'
+
+export const DEFAULT_URL = '/'
 
 export async function middleware(request: NextRequest) {
   const { nextUrl } = request
