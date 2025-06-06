@@ -5,7 +5,6 @@ import { Form, FormControl, FormField, FormItem } from '@/components/ui/form'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { signUpSchema } from '@/schemas'
-import { authService } from '@/services/auth-service'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader } from 'lucide-react'
 import { useForm } from 'react-hook-form'
@@ -14,6 +13,7 @@ import { useRouter } from 'next/navigation'
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
 
 import Link from 'next/link'
+import { signUp } from '@/services/auth-service'
 
 export function SignUpForm() {
   const { push } = useRouter()
@@ -28,7 +28,7 @@ export function SignUpForm() {
   const isSubmitting = form.formState.isSubmitting
 
   const onSubmit = form.handleSubmit(async (data) => {
-    const { success, message } = await authService.signUp(data)
+    const { success, message } = await signUp(data)
     if (!success) return toast.success(message)
     toast.success(message)
     push(DEFAULT_LOGIN_REDIRECT)

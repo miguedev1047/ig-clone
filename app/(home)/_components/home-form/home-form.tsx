@@ -8,10 +8,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@/components/ui/input'
 import { Loader } from 'lucide-react'
 import { toast } from 'sonner'
-import { authService } from '@/services/auth-service'
 import { signInSchema } from '@/schemas'
 import { useRouter } from 'next/navigation'
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
+import { signIn } from '@/services/auth-service'
 
 export function HomeForm() {
   const { push } = useRouter()
@@ -26,7 +26,7 @@ export function HomeForm() {
   const isValidValues = !!email && !!password
 
   const onSubmit = form.handleSubmit(async (data) => {
-    const { success, message } = await authService.signIn(data)
+    const { success, message } = await signIn(data)
     if (!success) return toast.success(message)
     toast.success('Log in successful!')
     push(DEFAULT_LOGIN_REDIRECT)
