@@ -1,11 +1,8 @@
-import { MicrosoftBtn, PlayStoreBtn } from '@/assets/buttons/_index'
-import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 
-const PLAYSTORE_URL =
-  'https://play.google.com/store/apps/details?id=com.instagram.android&pli=1'
-const MICROSOFT_URL =
-  'https://apps.microsoft.com/detail/9nblggh5l9xt?launch=true&mode=full&hl=es-es&gl=co&ocid=bingwebsearch'
+import { MicrosoftBtn, PlayStoreBtn } from '@/assets/buttons/_index'
+import { Button } from '@/components/ui/button'
+import { MICROSOFT_URL, PLAYSTORE_URL } from '@/constants/general'
 
 export function DownloadButtons() {
   return (
