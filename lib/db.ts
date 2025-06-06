@@ -6,8 +6,14 @@ const adapter = new PrismaLibSQL({
   authToken: `${process.env.TURSO_AUTH_TOKEN}`,
 })
 
-const globalForPrisma = global as unknown as { prisma: PrismaClient }
+const prismaClientSingleton = () => {
+  return new PrismaClient({ adapter })
+}
 
-export const db = globalForPrisma.prisma || new PrismaClient({ adapter })
+declare const globalThis: {
+  prismaGlobal: ReturnType<typeof prismaClientSingleton>
+} & typeof global
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = db
+export const db = globalThis.prismaGlobal ?? prismaClientSingleton()
+
+if (process.env.NODE_ENV !== 'production') globalThis.prismaGlobal = db
